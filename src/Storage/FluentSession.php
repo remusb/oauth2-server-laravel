@@ -35,7 +35,7 @@ class FluentSession extends AbstractFluentAdapter implements SessionInterface
     public function get($sessionId)
     {
         $result = $this->getConnection()->table('oauth_sessions')
-                    ->where('oauth_sessions.id', $sessionId)
+                    ->where('id', $sessionId)
                     ->first();
 
         if (is_null($result)) {
@@ -43,8 +43,8 @@ class FluentSession extends AbstractFluentAdapter implements SessionInterface
         }
 
         return (new SessionEntity($this->getServer()))
-               ->setId($result->id)
-               ->setOwner($result->owner_type, $result->owner_id);
+               ->setId($result['id'])
+               ->setOwner($result['owner_type'], $result['owner_id']);
     }
 
     /**
@@ -56,10 +56,12 @@ class FluentSession extends AbstractFluentAdapter implements SessionInterface
      */
     public function getByAccessToken(AccessTokenEntity $accessToken)
     {
+        $allowedSessionIds = $this->getConnection()->table('oauth_access_tokens')
+                   ->where('id', $accessToken->getId())
+                   ->pluck('session_id');
+
         $result = $this->getConnection()->table('oauth_sessions')
-                ->select('oauth_sessions.*')
-                ->join('oauth_access_tokens', 'oauth_sessions.id', '=', 'oauth_access_tokens.session_id')
-                ->where('oauth_access_tokens.id', $accessToken->getId())
+                ->whereIn('id', $allowedSessionIds)
                 ->first();
 
         if (is_null($result)) {
@@ -67,8 +69,8 @@ class FluentSession extends AbstractFluentAdapter implements SessionInterface
         }
 
         return (new SessionEntity($this->getServer()))
-               ->setId($result->id)
-               ->setOwner($result->owner_type, $result->owner_id);
+               ->setId($result['id'])
+               ->setOwner($result['owner_type'], $result['owner_id']);
     }
 
     /**
