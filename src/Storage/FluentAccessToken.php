@@ -42,7 +42,7 @@ class FluentAccessToken extends AbstractFluentAdapter implements AccessTokenInte
 
         return (new AccessTokenEntity($this->getServer()))
                ->setId($result['id'])
-               ->setExpireTime((int) $result->expire_time);
+               ->setExpireTime((int) $result['expire_time']);
     }
 
     /*
@@ -143,7 +143,7 @@ class FluentAccessToken extends AbstractFluentAdapter implements AccessTokenInte
     public function delete(AccessTokenEntity $token)
     {
         $this->getConnection()->table('oauth_access_tokens')
-        ->where('oauth_access_tokens.id', $token->getId())
+        ->where('id', $token->getId())
         ->delete();
     }
 }
