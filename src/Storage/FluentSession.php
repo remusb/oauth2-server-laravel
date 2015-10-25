@@ -61,15 +61,14 @@ class FluentSession extends AbstractFluentAdapter implements SessionInterface
                    ->pluck('session_id');
 
         $result = $this->getConnection()->table('oauth_sessions')
-                ->whereIn('id', $allowedSessionIds)
-                ->first();
+                ->find($allowedSessionIds);
 
         if (is_null($result)) {
             return;
         }
 
         return (new SessionEntity($this->getServer()))
-               ->setId($result['id'])
+               ->setId($result['_id'])
                ->setOwner($result['owner_type'], $result['owner_id']);
     }
 
