@@ -41,9 +41,9 @@ class FluentRefreshToken extends AbstractFluentAdapter implements RefreshTokenIn
         }
 
         return (new RefreshTokenEntity($this->getServer()))
-               ->setId($result->id)
-               ->setAccessTokenId($result->access_token_id)
-               ->setExpireTime((int) $result->expire_time);
+               ->setId($result['id'])
+               ->setAccessTokenId($result['access_token_id'])
+               ->setExpireTime((int) $result['expire_time']);
     }
 
     /**
